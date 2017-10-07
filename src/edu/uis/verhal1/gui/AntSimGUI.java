@@ -1,9 +1,6 @@
 package edu.uis.verhal1.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -123,6 +120,18 @@ public class AntSimGUI extends JFrame
 		
 		// validate all components
 		validate();
+
+
+	}
+
+	public void centerScrollBars()
+	{
+		Dimension size = colonyPane.getViewport().getViewSize();
+		Rectangle bounds = colonyPane.getViewport().getViewRect();
+
+		int x = (size.width - bounds.width) / 2;
+		int y = (size.height - bounds.height) / 2;
+		colonyPane.getViewport().setViewPosition(new Point(x,y));
 	}
 	
 	
