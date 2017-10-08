@@ -5,4 +5,8 @@ package edu.uis.verhal1.ants;
  */
 public class Scout extends Ant
 {
+    public Scout()
+    {
+        this.type = "SCOUT";
+    }
 }

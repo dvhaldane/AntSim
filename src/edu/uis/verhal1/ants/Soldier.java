@@ -5,4 +5,8 @@ package edu.uis.verhal1.ants;
  */
 public class Soldier extends Ant
 {
+    public Soldier()
+    {
+        this.type = "SOLDIER";
+    }
 }

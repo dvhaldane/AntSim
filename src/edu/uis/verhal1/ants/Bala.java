@@ -5,4 +5,9 @@ package edu.uis.verhal1.ants;
  */
 public class Bala extends Ant
 {
+
+    public Bala()
+    {
+        this.type = "BALA";
+    }
 }

@@ -1,11 +1,7 @@
 package edu.uis.verhal1.world;
 
 import edu.uis.verhal1.ants.Ant;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by HaldaneDavidV on 10/7/2017.
@@ -15,7 +11,8 @@ public class WorldTile
     private int ants;
     private int food;
     private int pheremone;
-    private Map antMap = Collections.synchronizedMap(new HashMap<String, Integer>());
+    private List<Ant> antList = new ArrayList<Ant>();
+    private Map antCountMap = Collections.synchronizedMap(new HashMap<Ant, Integer>());
     private Boolean revealed;
 
     public WorldTile()
@@ -25,16 +22,21 @@ public class WorldTile
         int pheremone = 0;
         Boolean revealed = false;
 
-        antMap.put("BALA", 0);
-        antMap.put("FORAGER", 0);
-        antMap.put("SCOUT", 0);
-        antMap.put("SOLDIER", 0);
-        antMap.put("QUEEN", 0);
     }
 
-    public Map getAntMap()
+    public Map getAntCountMap()
     {
-        return this.antMap;
+        return this.antCountMap;
+    }
+
+    public List getAntList()
+    {
+        return this.antList;
+    }
+
+    public void addAnt(Ant ant)
+    {
+        antList.add(ant);
     }
 
     public int getFood()

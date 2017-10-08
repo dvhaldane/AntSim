@@ -5,4 +5,9 @@ package edu.uis.verhal1.ants;
  */
 public class Queen extends Ant
 {
+    public Queen()
+    {
+        this.type = "QUEEN";
+    }
+
 }

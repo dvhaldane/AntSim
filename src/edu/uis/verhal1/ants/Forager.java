@@ -5,4 +5,8 @@ package edu.uis.verhal1.ants;
  */
 public class Forager extends Ant
 {
+    public Forager()
+    {
+        this.type = "FORAGER";
+    }
 }

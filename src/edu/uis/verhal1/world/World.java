@@ -6,6 +6,7 @@ package edu.uis.verhal1.world;
 public class World
 {
     private int day;
+    private boolean end = false;
     private int turn;
     private boolean continuousMode;
     private WorldTile[][] grid;
