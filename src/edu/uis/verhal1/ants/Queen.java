@@ -28,13 +28,13 @@ public class Queen extends Ant
         {
             if (roll >= 0 && roll < 50)
             {
-                tile.queueHatch(new Forager());
+                tile.queueAnt(new Forager());
             } else if (roll >= 50 && roll < 75)
             {
-                tile.queueHatch(new Scout());
+                tile.queueAnt(new Scout());
             } else
             {
-                tile.queueHatch(new Soldier());
+                tile.queueAnt(new Soldier());
             }
         }
     }

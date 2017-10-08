@@ -94,4 +94,9 @@ public class ColonyView extends JPanel
 		// contents of node should initially be hidden
 		nodeView.hideNode();
 	}
+
+	public void getColonyNodeView(String id)
+	{
+
+	}
 }

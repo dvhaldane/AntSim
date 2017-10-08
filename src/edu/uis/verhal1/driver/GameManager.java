@@ -1,18 +1,13 @@
 package edu.uis.verhal1.driver;
 
-import edu.uis.verhal1.ants.Ant;
-import edu.uis.verhal1.ants.Queen;
 import edu.uis.verhal1.gui.*;
 import edu.uis.verhal1.world.World;
 import edu.uis.verhal1.world.WorldTile;
-import javafx.scene.Node;
 
-import javax.swing.*;
 import javax.swing.Timer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
 
 /**
  * Created by HaldaneDavidV on 10/7/2017.
@@ -56,7 +51,7 @@ public class GameManager implements ActionListener
         world = new World();
 
         //Build Spawn Tile
-        WorldTile spawnTile = new WorldTile();
+        WorldTile spawnTile = new WorldTile(colonyMidpointX, colonyMidpointY);
         TileManager.setSpawnTile(spawnTile);
 
         ColonyNodeView spawnNode = new ColonyNodeView();
@@ -64,7 +59,7 @@ public class GameManager implements ActionListener
 
         //Build Adjacent Tiles
         //Update GUI
-        NodeManager.updateNodeCounts(spawnNode, spawnTile);
+        NodeManager.updateNodeDisplay(spawnNode, spawnTile);
 
         //Add Node to GUI World Board and WorldTileMap
         WorldManager.addToTileMap(world, spawnTile, colonyMidpointX, colonyMidpointY);
@@ -123,8 +118,16 @@ public class GameManager implements ActionListener
                     AntManager.doAntListGameTick(world, tile, tile.getAntList());
 
                     ColonyNodeView node = new ColonyNodeView();
-                    NodeManager.updateNodeCounts(node, tile);
+                    NodeManager.updateNodeDisplay(node, tile);
                     view.addColonyNodeView(node, i, j);
+
+
+                    if (i == colonyMidpointX && j == colonyMidpointY)
+                    {
+                        node.setQueen(true);
+                    }
+
+                    node.showNode();
                 }
             }
         }

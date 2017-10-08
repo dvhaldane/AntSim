@@ -3,9 +3,7 @@ package edu.uis.verhal1.driver;
 import edu.uis.verhal1.ants.*;
 import edu.uis.verhal1.world.World;
 import edu.uis.verhal1.world.WorldTile;
-import javafx.scene.Parent;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AntManager
@@ -36,7 +34,7 @@ public abstract class AntManager
             }
         }
 
-        tile.reconcileHatches();
+        tile.mergeQueue();
     }
 
     public static void roleBala(World world, Bala bala)

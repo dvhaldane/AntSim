@@ -1,7 +1,11 @@
 package edu.uis.verhal1.world;
 
 import edu.uis.verhal1.ants.Ant;
+
+import java.awt.*;
+import java.awt.geom.Point2D;
 import java.util.*;
+import java.util.List;
 
 /**
  * Created by HaldaneDavidV on 10/7/2017.
@@ -11,17 +15,21 @@ public class WorldTile
     private int ants;
     private int food;
     private int pheremone;
+    private int posX;
+    private int posY;
     private List<Ant> antList = new ArrayList<Ant>();
-    private List<Ant> hatchList = new ArrayList<Ant>();
+    private List<Ant> antQueue = new ArrayList<Ant>();
     private Map antCountMap = Collections.synchronizedMap(new HashMap<Ant, Integer>());
     private Boolean revealed;
 
-    public WorldTile()
+    public WorldTile(int posX, int posY)
     {
         ants = 0;
         int food = 0;
         int pheremone = 0;
         Boolean revealed = false;
+        this.posX = posX;
+        this.posY = posY;
 
     }
 
@@ -40,17 +48,19 @@ public class WorldTile
         antList.add(ant);
     }
 
-    public void queueHatch(Ant ant)
+    public void queueAnt(Ant ant)
     {
-        hatchList.add(ant);
+        antQueue.add(ant);
     }
 
-    public void reconcileHatches()
+    public void mergeQueue()
     {
-        for (Ant ant : hatchList)
+        for (Ant ant : antQueue)
         {
             antList.add(ant);
         }
+
+        antQueue.clear();
     }
 
     public int getFood()
@@ -71,6 +81,13 @@ public class WorldTile
     public void setPheremone(int pheremone)
     {
         this.pheremone = pheremone;
+    }
+
+    public Point getCoordinates()
+    {
+        Point coords = new Point(posX,posY);
+
+        return coords;
     }
 
 }

@@ -13,7 +13,7 @@ public abstract class NodeManager
     }
 
 
-    public static void updateNodeCounts(ColonyNodeView node, WorldTile tile)
+    public static void updateNodeDisplay(ColonyNodeView node, WorldTile tile)
     {
         int balaCount = 0;
         int foragerCount = 0;
@@ -45,6 +45,7 @@ public abstract class NodeManager
         node.setScoutCount(scoutCount);
         node.setSoldierCount(soldierCount);
         node.setFoodAmount(tile.getFood());
+        node.setID(String.valueOf((int)tile.getCoordinates().getX()) + "," + String.valueOf((int)tile.getCoordinates().getY()));
     }
 
 }
