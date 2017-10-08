@@ -30,47 +30,35 @@ public class Queen extends Ant implements TickAction
         {
             if (roll >= 0 && roll < 50)
             {
-                tile.queueAnt(new Forager());
-            } else if (roll >= 50 && roll < 75)
+                tile.queueAntAdd(new Forager());
+            }
+            else if (roll >= 50 && roll < 75)
             {
-                tile.queueAnt(new Scout());
-            } else
+                tile.queueAntAdd(new Scout());
+            }
+            else
             {
-                tile.queueAnt(new Soldier());
+                tile.queueAntAdd(new Soldier());
             }
         }
     }
 
     public void doTickAction(World world, WorldTile tile)
     {
-
-        //Manage Life
-        if (this.isAlive() == false)
+        //Eat
+        if (tile.getFood() == 0)
         {
-            world.endGame();
+            this.kill();
         }
         else
         {
+            this.eat(tile);
+        }
 
-            //Eat
-            if (tile.getFood() == 0)
-            {
-                world.endGame();
-            }
-            else
-            {
-                this.eat(tile);
-            }
-
-            if (world.getDayChanged() == true)
-            {
-                this.hatch(tile);
-                this.incrementLife();
-                world.setDayChanged(false);
-            }
-
-
-
+        if (world.getDayChanged() == true)
+        {
+            this.hatch(tile);
+            this.decrementLifeOneDay();
         }
     }
 }

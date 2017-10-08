@@ -291,7 +291,11 @@ public class ColonyNodeView extends JPanel
 	{
 		setVisible(true);
 	}
-	
+
+	public boolean visible()
+	{
+		return isVisible();
+	}
 	
 	/**
 	 *	hide this view

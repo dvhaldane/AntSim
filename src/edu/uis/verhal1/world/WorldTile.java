@@ -4,7 +4,6 @@ import edu.uis.verhal1.ants.Ant;
 import edu.uis.verhal1.gui.ColonyNodeView;
 
 import java.awt.*;
-import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.List;
 
@@ -13,15 +12,22 @@ import java.util.List;
  */
 public class WorldTile
 {
+    private int balaCount;
+    private int foragerCount;
+    private int scoutCount;
+    private int soldierCount;
     private int food;
-    private boolean isWorldSpawn;
-    private ColonyNodeView node;
     private int pheremone;
     private int posX;
     private int posY;
-    private List<Ant> antList = new ArrayList<Ant>();
-    private List<Ant> antQueue = new ArrayList<Ant>();
-    private Map antCountMap = Collections.synchronizedMap(new HashMap<Ant, Integer>());
+    private boolean isWorldSpawn;
+    private ColonyNodeView node;
+
+    private HashMap<Integer, Ant> antMap = new HashMap<>();
+
+    private List<Ant> addQueue = new ArrayList<Ant>();
+    private List<Ant> removeQueue = new ArrayList<Ant>();
+
     private Boolean revealed;
 
     public WorldTile(int posX, int posY)
@@ -35,29 +41,45 @@ public class WorldTile
 
     }
 
-    public List getAntList()
+    public HashMap<Integer, Ant> getAntMap()
     {
-        return this.antList;
+        return this.antMap;
     }
 
     public void addAnt(Ant ant)
     {
-        antList.add(ant);
+        antMap.put(ant.getID(),ant);
     }
 
-    public void queueAnt(Ant ant)
+    public void queueAntAdd(Ant ant)
     {
-        antQueue.add(ant);
+        addQueue.add(ant);
+    }
+
+    public void removeAnt(Ant ant)
+    {
+        antMap.remove(ant.getID());
+    }
+
+    public void queueAntRemove(Ant ant)
+    {
+        removeQueue.add(ant);
     }
 
     public void mergeQueue()
     {
-        for (Ant ant : antQueue)
+        for (Ant ant : addQueue)
         {
-            antList.add(ant);
+            antMap.put(ant.getID(),ant);
         }
 
-        antQueue.clear();
+        for (Ant ant : removeQueue)
+        {
+            antMap.remove(ant.getID(),ant);
+        }
+
+        addQueue.clear();
+        removeQueue.clear();
     }
 
     public int getFood()
@@ -68,6 +90,53 @@ public class WorldTile
     public void setFood(int food)
     {
         this.food = food;
+    }
+
+    public int getBalaCount()
+    {
+        return this.balaCount;
+    }
+    public void setBalaCount(int count)
+    {
+        this.balaCount = count;
+    }
+
+    public int getForagerCount()
+    {
+        return this.foragerCount;
+    }
+
+    public void setForagerCount(int count)
+    {
+        this.foragerCount = count;
+    }
+
+    public int getScoutCount()
+    {
+        return scoutCount;
+    }
+
+    public void setScoutCount(int count)
+    {
+        this.scoutCount = count;
+    }
+
+    public int getSoldierCount()
+    {
+        return this.soldierCount;
+    }
+
+    public void setSoldierCount(int count)
+    {
+        this.soldierCount = count;
+    }
+
+    public void resetCounts()
+    {
+        this.balaCount = 0;
+        this.foragerCount = 0;
+        this.scoutCount = 0;
+        this.soldierCount = 0;
     }
 
     public ColonyNodeView getNode()
