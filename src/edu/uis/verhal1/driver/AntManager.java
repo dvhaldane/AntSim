@@ -61,7 +61,7 @@ public abstract class AntManager
     {
 
         //Manage Life
-        if (queen.getLife() == 0)
+        if (queen.isAlive() == false)
         {
             world.endGame();
         }

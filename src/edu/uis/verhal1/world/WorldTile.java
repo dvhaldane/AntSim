@@ -1,6 +1,7 @@
 package edu.uis.verhal1.world;
 
 import edu.uis.verhal1.ants.Ant;
+import edu.uis.verhal1.gui.ColonyNodeView;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -12,8 +13,9 @@ import java.util.List;
  */
 public class WorldTile
 {
-    private int ants;
     private int food;
+    private boolean isWorldSpawn;
+    private ColonyNodeView node;
     private int pheremone;
     private int posX;
     private int posY;
@@ -24,18 +26,13 @@ public class WorldTile
 
     public WorldTile(int posX, int posY)
     {
-        ants = 0;
-        int food = 0;
-        int pheremone = 0;
-        Boolean revealed = false;
+        this.food = 0;
+        this.pheremone = 0;
+        this.revealed = false;
         this.posX = posX;
         this.posY = posY;
+        this.isWorldSpawn = false;
 
-    }
-
-    public Map getAntCountMap()
-    {
-        return this.antCountMap;
     }
 
     public List getAntList()
@@ -73,6 +70,16 @@ public class WorldTile
         this.food = food;
     }
 
+    public ColonyNodeView getNode()
+    {
+        return this.node;
+    }
+
+    public void setNode(ColonyNodeView node)
+    {
+        this.node = node;
+    }
+
     public int getPheremone()
     {
         return this.pheremone;
@@ -81,6 +88,16 @@ public class WorldTile
     public void setPheremone(int pheremone)
     {
         this.pheremone = pheremone;
+    }
+
+    public boolean isWorldSpawn()
+    {
+        return isWorldSpawn;
+    }
+
+    public void setWorldSpawn()
+    {
+        this.isWorldSpawn = true;
     }
 
     public Point getCoordinates()

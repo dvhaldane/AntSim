@@ -61,6 +61,10 @@ public class GameManager implements ActionListener
         //Update GUI
         NodeManager.updateNodeDisplay(spawnNode, spawnTile);
 
+        spawnTile.setWorldSpawn();
+
+        spawnTile.setNode(spawnNode);
+
         //Add Node to GUI World Board and WorldTileMap
         WorldManager.addToTileMap(world, spawnTile, colonyMidpointX, colonyMidpointY);
         view.addColonyNodeView(spawnNode, colonyMidpointX, colonyMidpointY);

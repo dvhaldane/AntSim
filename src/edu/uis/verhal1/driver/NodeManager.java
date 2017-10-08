@@ -9,7 +9,6 @@ public abstract class NodeManager
     public static void setSpawnNode(ColonyNodeView node)
     {
         node.setQueen(true);
-
     }
 
 

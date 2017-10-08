@@ -1,19 +1,23 @@
 package edu.uis.verhal1.ants;
 
+import edu.uis.verhal1.driver.TickAction;
+
 /**
  * Created by HaldaneDavidV on 10/7/2017.
  */
-public class Ant
+public class Ant implements TickAction
 {
     private static int index = 0;
     private int id;
-    protected int life;
+    private boolean isAlive;
+    protected int lifeInDays;
     protected String type;
 
     public Ant()
     {
         this.id = index;
-        this.life = 365;
+        this.isAlive = true;
+        this.lifeInDays = 365;
         index++;
     }
 
@@ -22,19 +26,17 @@ public class Ant
         return this.id;
     }
 
-    public int getLife()
+    public boolean isAlive()
     {
-        return this.life;
-    }
-
-    public int setLife()
-    {
-        return this.life;
+        if (isAlive)
+            return true;
+        else
+            return false;
     }
 
     public void incrementLife()
     {
-        this.life--;
+        this.lifeInDays--;
     }
 
     public String getType()
