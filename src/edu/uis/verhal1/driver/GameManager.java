@@ -8,13 +8,11 @@ import edu.uis.verhal1.world.WorldTile;
 import javafx.scene.Node;
 
 import javax.swing.*;
+import javax.swing.Timer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by HaldaneDavidV on 10/7/2017.
@@ -25,6 +23,7 @@ public class GameManager implements ActionListener
     private int colonyWidth;
     private int colonyMidpointX;
     private int colonyMidpointY;
+    private ColonyView view;
     private World world;
     private AntSimGUI gui;
 
@@ -51,7 +50,7 @@ public class GameManager implements ActionListener
         System.out.println(colonyMidpointX);
         System.out.println(colonyMidpointY);
 
-        ColonyView view = new ColonyView(colonyHeight, colonyWidth);
+        view = new ColonyView(colonyHeight, colonyWidth);
 
         //Build World
         world = new World();
@@ -59,6 +58,7 @@ public class GameManager implements ActionListener
         //Build Spawn Tile
         WorldTile spawnTile = new WorldTile();
         TileManager.setSpawnTile(spawnTile);
+
         ColonyNodeView spawnNode = new ColonyNodeView();
         NodeManager.setSpawnNode(spawnNode);
 
@@ -66,7 +66,8 @@ public class GameManager implements ActionListener
         //Update GUI
         NodeManager.updateNodeCounts(spawnNode, spawnTile);
 
-        //Add Node to GUI World Board
+        //Add Node to GUI World Board and WorldTileMap
+        WorldManager.addToTileMap(world, spawnTile, colonyMidpointX, colonyMidpointY);
         view.addColonyNodeView(spawnNode, colonyMidpointX, colonyMidpointY);
 
         //Init the GUI
@@ -92,19 +93,6 @@ public class GameManager implements ActionListener
         }
     }
 
-    private void performGameEndCheck(World world)
-    {
-        WorldTile tile = world.getTile(0,0);
-        List list = tile.getAntList();
-
-        for (Object o : list)
-        {
-
-        }
-
-
-    }
-
     private void performGameTick()
     {
 
@@ -113,9 +101,37 @@ public class GameManager implements ActionListener
 
         if (world.getTurn() > 0 && world.getTurn() % 10 == 0)
         {
-            world.setDay(world.getDay() + 1);
+            world.incrementDay();
         }
 
         GUIManager.updateWorldTime(gui, world);
+
+        if (world.getEndGame() == true)
+        {
+            gameTick.stop();
+        }
+
+
+        //Do ticks per tile
+        for (int i = 0; i < world.getWorldTileMap().length; i++)
+        {
+            for (int j = 0; j <world.getWorldTileMap()[i].length; j++)
+            {
+                if (world.getWorldTileMap()[i][j] != null)
+                {
+                    WorldTile tile = world.getWorldTileMap()[i][j];
+                    AntManager.doAntListGameTick(world, tile, tile.getAntList());
+
+                    ColonyNodeView node = new ColonyNodeView();
+                    NodeManager.updateNodeCounts(node, tile);
+                    view.addColonyNodeView(node, i, j);
+                }
+            }
+        }
+
+
+
+
+
     }
 }

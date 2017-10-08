@@ -6,19 +6,30 @@ package edu.uis.verhal1.world;
 public class World
 {
     private int day;
-    private boolean end = false;
+    private boolean dayChanged;
+    private boolean endGame = false;
     private int turn;
     private boolean continuousMode;
-    private WorldTile[][] grid;
+    private WorldTile[][] worldTileMap;
 
     public World()
     {
         day = 0;
         turn = 0;
         continuousMode = false;
-        grid = new WorldTile[27][27];
+        worldTileMap = new WorldTile[27][27];
+        dayChanged = false;
     }
 
+    public void endGame()
+    {
+        this.endGame = true;
+    }
+
+    public Boolean getEndGame()
+    {
+        return endGame;
+    }
     public int getDay()
     {
         return this.day;
@@ -32,6 +43,7 @@ public class World
     public void incrementDay()
     {
         this.day += 1;
+        this.dayChanged = true;
     }
 
     public boolean getContinuousMode()
@@ -42,6 +54,16 @@ public class World
     public void setContinousMode(Boolean mode)
     {
         this.continuousMode = mode;
+    }
+
+    public boolean getDayChanged()
+    {
+        return this.dayChanged;
+    }
+
+    public void setDayChanged(boolean changed)
+    {
+        this.dayChanged = changed;
     }
 
     public int getTurn()
@@ -61,13 +83,17 @@ public class World
 
     public WorldTile getTile(int x, int y)
     {
-        return grid[x][y];
+        return worldTileMap[x][y];
     }
 
     public void setTile(WorldTile tile, int x, int y)
     {
-        grid[x][y] = tile;
+        worldTileMap[x][y] = tile;
     }
 
+    public WorldTile[][] getWorldTileMap()
+    {
+        return worldTileMap;
+    }
 
 }

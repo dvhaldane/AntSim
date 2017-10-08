@@ -12,6 +12,7 @@ public class WorldTile
     private int food;
     private int pheremone;
     private List<Ant> antList = new ArrayList<Ant>();
+    private List<Ant> hatchList = new ArrayList<Ant>();
     private Map antCountMap = Collections.synchronizedMap(new HashMap<Ant, Integer>());
     private Boolean revealed;
 
@@ -37,6 +38,19 @@ public class WorldTile
     public void addAnt(Ant ant)
     {
         antList.add(ant);
+    }
+
+    public void queueHatch(Ant ant)
+    {
+        hatchList.add(ant);
+    }
+
+    public void reconcileHatches()
+    {
+        for (Ant ant : hatchList)
+        {
+            antList.add(ant);
+        }
     }
 
     public int getFood()
