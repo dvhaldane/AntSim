@@ -2,6 +2,7 @@ package edu.uis.verhal1.ants;
 
 import edu.uis.verhal1.driver.NodeManager;
 import edu.uis.verhal1.driver.TickAction;
+import edu.uis.verhal1.driver.TileManager;
 import edu.uis.verhal1.world.World;
 import edu.uis.verhal1.world.WorldTile;
 
@@ -37,6 +38,7 @@ public class Scout extends Ant implements TickAction
         if (world.getTileFromTilemap(x,y) != null)
         {
             world.getTileFromTilemap(x, y).queueAntAdd(this);
+            TileManager.queueTileForRefresh(world.getTileFromTilemap(x, y));
         }
 
         NodeManager.addToRefreshQueue(world.getTileFromTilemap(x,y).getNode(), world.getTileFromTilemap(x,y));

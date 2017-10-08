@@ -182,13 +182,18 @@ public class GameManager implements ActionListener
                     //Merge Queued Ants
                     tile.mergeQueue();
 
+
                     if (tile.getNode().visible())
                     NodeManager.updateNodeDisplay(tile.getNode(), tile);
+
+
                     NodeManager.updateQueuedNodeDisplay();
 
                 }
             }
         }
+
+        TileManager.mergePendingQueue();
 
 
 
