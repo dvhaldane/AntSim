@@ -14,6 +14,7 @@ public class WorldTile
 {
     private int balaCount;
     private int foragerCount;
+    private boolean revealed;
     private int scoutCount;
     private int soldierCount;
     private int food;
@@ -27,8 +28,6 @@ public class WorldTile
 
     private List<Ant> addQueue = new ArrayList<Ant>();
     private List<Ant> removeQueue = new ArrayList<Ant>();
-
-    private Boolean revealed;
 
     public WorldTile(int posX, int posY)
     {
@@ -109,6 +108,16 @@ public class WorldTile
     public void setForagerCount(int count)
     {
         this.foragerCount = count;
+    }
+
+    public boolean getRevealed()
+    {
+        return this.revealed;
+    }
+
+    public void reveal()
+    {
+        this.revealed = true;
     }
 
     public int getScoutCount()

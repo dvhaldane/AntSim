@@ -1,5 +1,6 @@
 package edu.uis.verhal1.world;
 
+import java.awt.*;
 import java.util.Random;
 
 /**
@@ -100,8 +101,12 @@ public class World
 
     public WorldTile getTileFromTilemap(int x, int y)
     {
-        System.out.println(x + "," + y);
         return worldTileMap[x][y];
+    }
+
+    public WorldTile getTileFromTilemap(Point p)
+    {
+        return worldTileMap[(int)p.getX()][(int)p.getY()];
     }
 
     public void addTileToTileMap(WorldTile tile, int x, int y)

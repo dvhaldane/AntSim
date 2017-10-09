@@ -36,7 +36,7 @@ public abstract class TileManager
             tile.setForagerCount(tile.getForagerCount() + 1);
         }
 
-        for (int i = 0; i < 1; i ++)
+        for (int i = 0; i < 5; i ++)
         {
             Scout scout = new Scout();
             tile.addAnt(scout);

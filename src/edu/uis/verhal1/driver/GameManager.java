@@ -26,7 +26,7 @@ public class GameManager implements ActionListener
     private String endReason_QUEEN = "The Queen has died.";
     private AntSimGUI gui;
     private ColonyView view;
-    private Timer gameTick = new Timer(2000,this);
+    private Timer gameTick = new Timer(1000,this);
     private World world = new World();
 
     GameManager()
@@ -180,20 +180,39 @@ public class GameManager implements ActionListener
                     }
 
                     //Merge Queued Ants
-                    tile.mergeQueue();
 
 
-                    if (tile.getNode().visible())
-                    NodeManager.updateNodeDisplay(tile.getNode(), tile);
+
+                    //if (tile.getNode().visible())
+                     //   NodeManager.updateNodeDisplay(tile.getNode(), tile);
 
 
-                    NodeManager.updateQueuedNodeDisplay();
+                    //NodeManager.updateQueuedNodeDisplay();
 
                 }
             }
         }
 
-        TileManager.mergePendingQueue();
+        for (int i = 0; i < world.getWorldTileMap().length; i++)
+        {
+            for (int j = 0; j < world.getWorldTileMap()[i].length; j++)
+            {
+                if (world.getWorldTileMap()[i][j] != null)
+                {
+                    WorldTile tile = world.getWorldTileMap()[i][j];
+
+                    tile.mergeQueue();
+
+                    if (tile.getNode().visible() || tile.getRevealed())
+                    {
+                        NodeManager.updateNodeDisplay(tile.getNode(), tile);
+                    }
+                }
+            }
+        }
+
+        System.gc();
+
 
 
 

@@ -1,6 +1,6 @@
 package edu.uis.verhal1.driver;
 
-import edu.uis.verhal1.ants.Ant;
+import edu.uis.verhal1.ants.*;
 import edu.uis.verhal1.gui.ColonyNodeView;
 import edu.uis.verhal1.world.WorldTile;
 
@@ -38,6 +38,32 @@ public abstract class NodeManager
 
     public static void updateNodeDisplay(ColonyNodeView node, WorldTile tile)
     {
+
+        Set set = tile.getAntMap().entrySet();
+        Iterator iterator = set.iterator();
+
+        tile.resetCounts();
+
+        while (iterator.hasNext())
+        {
+            Map.Entry mapEntry = (Map.Entry) iterator.next();
+
+            Object o = mapEntry.getValue();
+
+            if (o instanceof Bala)
+            {
+                tile.setBalaCount(tile.getBalaCount() + 1);
+            } else if (o instanceof Forager)
+            {
+                tile.setForagerCount(tile.getForagerCount() + 1);
+            } else if (o instanceof Scout)
+            {
+                tile.setScoutCount(tile.getScoutCount() + 1);
+            } else if (o instanceof Soldier)
+            {
+                tile.setSoldierCount(tile.getSoldierCount() + 1);
+            }
+        }
 
         int balaCount = tile.getBalaCount();
         int foragerCount = tile.getForagerCount();

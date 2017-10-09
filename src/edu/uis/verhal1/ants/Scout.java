@@ -27,24 +27,34 @@ public class Scout extends Ant implements TickAction
         //Movement Logic
 
         Random random = new Random();
-        ArrayList<Point> temp = getValidMovementPoints(world, pointList, tile.getCoordinates());
+        ArrayList<Point> validMoveToTiles = getValidMovementPoints(world, pointList, tile.getCoordinates());
 
-        int pick = random.nextInt(temp.size());
-        Point point = temp.get(pick);
+        int pick = random.nextInt(validMoveToTiles.size());
+        Point point = validMoveToTiles.get(pick);
 
         int x = (int)tile.getCoordinates().getX() - (int)point.getX();
+
         int y = (int)tile.getCoordinates().getY() - (int)point.getY();
 
-        if (world.getTileFromTilemap(x,y) != null)
+        WorldTile targetTile = world.getTileFromTilemap(x, y);
+
+        move(tile, targetTile, this);
+
+        if (targetTile.getRevealed() == false)
         {
-            world.getTileFromTilemap(x, y).queueAntAdd(this);
-            TileManager.queueTileForRefresh(world.getTileFromTilemap(x, y));
+            int foodChance = random.nextInt(100);
+
+            if (foodChance >= 75)
+            {
+                int food = random.nextInt(500) + 501;
+                targetTile.setFood(targetTile.getFood() + food);
+            }
+
+            targetTile.reveal();
+
         }
 
-        NodeManager.addToRefreshQueue(world.getTileFromTilemap(x,y).getNode(), world.getTileFromTilemap(x,y));
 
-        tile.queueAntRemove(this);
-        //Remove Ant from this tile
 
 
     }

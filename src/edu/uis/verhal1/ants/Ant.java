@@ -1,6 +1,7 @@
 package edu.uis.verhal1.ants;
 
 import edu.uis.verhal1.world.World;
+import edu.uis.verhal1.world.WorldTile;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -77,5 +78,11 @@ public class Ant
         }
 
         return tempPoints;
+    }
+
+    public void move(WorldTile currentTile, WorldTile targetTile, Ant ant)
+    {
+        targetTile.queueAntAdd(ant);
+        currentTile.queueAntRemove(ant);
     }
 }
