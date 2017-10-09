@@ -54,9 +54,10 @@ public class Scout extends Ant implements TickAction
 
         }
 
-
-
-
+        if (world.getDayChanged() == true)
+        {
+            this.decrementLifeOneDay();
+        }
     }
 
 }

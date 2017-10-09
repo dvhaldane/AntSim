@@ -85,4 +85,6 @@ public class Ant
         targetTile.queueAntAdd(ant);
         currentTile.queueAntRemove(ant);
     }
+
+
 }

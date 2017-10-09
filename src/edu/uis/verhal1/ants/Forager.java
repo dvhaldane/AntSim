@@ -15,6 +15,7 @@ public class Forager extends Ant implements TickAction
 {
     private int food;
     private int foodCapacity;
+    private boolean foraging = true;
     private ArrayList<Point> movementHistory = new ArrayList<>();
 
     public Forager()
@@ -46,41 +47,88 @@ public class Forager extends Ant implements TickAction
             returnToNest(world, tile);
         }
 
+        if (world.getDayChanged() == true)
+        {
+            this.decrementLifeOneDay();
+        }
+
+    }
+
+    public void kill(WorldTile tile)
+    {
+        this.lifeInDays = 0;
+        tile.setFood(tile.getFood() + this.getFood());
     }
 
     private void forage(World world, WorldTile tile)
     {
 
-        ArrayList<Point> validMoveToTiles = getValidMovementPoints(world, pointList, tile.getCoordinates());
+        ArrayList<Point> validPointsForMovementCalc = getValidMovementPoints(world, pointList, tile.getCoordinates());
 
-        Collections.shuffle(validMoveToTiles);
+        Collections.shuffle(validPointsForMovementCalc);
 
-        Point temp = validMoveToTiles.get(0);
+        Point tempPoint = validPointsForMovementCalc.get(0);
 
-        int x = (int)tile.getCoordinates().getX() - (int)temp.getX();
-        int y = (int)tile.getCoordinates().getY() - (int)temp.getY();
+        int x = (int)tile.getCoordinates().getX() - (int)tempPoint.getX();
+        int y = (int)tile.getCoordinates().getY() - (int)tempPoint.getY();
 
-        WorldTile tempTile = new WorldTile(x,y);
+        Point tempMoveToCoords = world.getTileFromTilemap(x,y).getCoordinates();
 
         //Move to square with highest level of pheremone
-        for (Point p : validMoveToTiles)
+        for (Point p : validPointsForMovementCalc)
         {
             x = (int)tile.getCoordinates().getX() - (int)p.getX();
             y = (int)tile.getCoordinates().getY() - (int)p.getY();
 
-            if (world.getTileFromTilemap(x,y).getPheremone() > world.getTileFromTilemap(x,y).getPheremone())
+            if (world.getTileFromTilemap(x,y).getRevealed())
             {
-                tempTile = world.getTileFromTilemap(x,y);
+                tempMoveToCoords = world.getTileFromTilemap(x,y).getCoordinates();
+
+                if (world.getTileFromTilemap(x, y).getPheremone() > world.getTileFromTilemap(tempMoveToCoords).getPheremone())
+                {
+                    tempMoveToCoords = world.getTileFromTilemap(x, y).getCoordinates();
+                }
             }
         }
 
-         move(tile, tempTile, this);
+         move(tile, world.getTileFromTilemap(tempMoveToCoords), this);
          movementHistory.add(tile.getCoordinates());
 
     }
 
+    public int getFood()
+    {
+        return this.food;
+    }
+
     private void returnToNest(World world, WorldTile tile)
     {
+        //Stop at spawn for debug
+        if (tile.isWorldSpawn())
+        {
+            tile.setFood(tile.getFood() + 1);
+            this.food = 0;
+            movementHistory.clear();
+            foraging = true;
+        }
+        else
+        {
+            if (foraging == true)
+            {
+                Collections.reverse(movementHistory);
+                foraging = false;
+            }
+            if (tile.getPheremone() < 1000)
+            {
+                tile.setPheremone(tile.getPheremone() + 10);
+            }
+            move(tile, world.getTileFromTilemap(movementHistory.get(0)), this);
+            movementHistory.remove(0);
+        }
+    }
 
+    private void breakCircle()
+    {
+        //If movementHistory contains the same point more than X times block the ant from going to that point.
     }
 }
