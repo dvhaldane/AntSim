@@ -14,9 +14,9 @@ import java.util.Collections;
 public class Forager extends Ant implements TickAction
 {
     private int food;
-    private int foodCapacity;
+    private final int foodCapacity;
     private boolean foraging = true;
-    private ArrayList<Point> movementHistory = new ArrayList<>();
+    private final ArrayList<Point> movementHistory = new ArrayList<>();
 
     public Forager()
     {
@@ -37,7 +37,7 @@ public class Forager extends Ant implements TickAction
             if (food < foodCapacity)
             {
 
-                if (tile.getFood() > 0 && tile.isWorldSpawn() == false)
+                if (tile.getFood() > 0 && !tile.isWorldSpawn())
                 {
                     food = 1;
                     tile.setFood(tile.getFood() - 1);
@@ -50,7 +50,7 @@ public class Forager extends Ant implements TickAction
                 returnToNest(world, tile);
             }
 
-            if (world.getDayChanged() == true)
+            if (world.getDayChanged())
             {
                 this.decrementLifeOneDay();
             }
@@ -120,7 +120,7 @@ public class Forager extends Ant implements TickAction
         }
         else
         {
-            if (foraging == true)
+            if (foraging)
             {
                 Collections.reverse(movementHistory);
                 foraging = false;
@@ -134,8 +134,4 @@ public class Forager extends Ant implements TickAction
         }
     }
 
-    private void breakCircle()
-    {
-        //If movementHistory contains the same point more than X times block the ant from going to that point.
-    }
 }

@@ -4,14 +4,13 @@ import edu.uis.verhal1.ants.Forager;
 import edu.uis.verhal1.ants.Queen;
 import edu.uis.verhal1.ants.Scout;
 import edu.uis.verhal1.ants.Soldier;
-import edu.uis.verhal1.world.World;
 import edu.uis.verhal1.world.WorldTile;
 
 import java.util.ArrayList;
 
-public abstract class TileManager
+abstract class TileManager
 {
-    private static ArrayList<WorldTile> pendingForRefresh = new ArrayList<>();
+    private static final ArrayList<WorldTile> pendingForRefresh = new ArrayList<>();
 
     public static void createSpawnTile(WorldTile tile)
     {

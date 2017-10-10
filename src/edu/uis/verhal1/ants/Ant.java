@@ -12,14 +12,14 @@ import java.util.ArrayList;
 public class Ant
 {
     private static int index = 0;
-    private int id;
+    private final int id;
     private boolean isDead;
-    protected int lifeInDays;
-    protected String type;
+    int lifeInDays;
+    String type;
 
-    protected final ArrayList<Point> pointList = new ArrayList<Point>();
+    final ArrayList<Point> pointList = new ArrayList<Point>();
 
-    public Ant()
+    Ant()
     {
         this.id = index;
         this.isDead = false;
@@ -37,7 +37,7 @@ public class Ant
 
     }
 
-    public void kill()
+    void kill()
     {
         this.isDead = true;
     }
@@ -52,7 +52,7 @@ public class Ant
         return this.id;
     }
 
-    public void decrementLifeOneDay()
+    void decrementLifeOneDay()
     {
         if (this.lifeInDays > 0)
         {
@@ -69,7 +69,7 @@ public class Ant
         return this.type;
     }
 
-    public ArrayList<Point> getValidMovementPoints(World world, ArrayList<Point> points, Point currentPosition)
+    ArrayList<Point> getValidMovementPoints(World world, ArrayList<Point> points, Point currentPosition)
     {
         ArrayList<Point> tempPoints = new ArrayList<>();
 
@@ -84,13 +84,13 @@ public class Ant
         return tempPoints;
     }
 
-    public void move(WorldTile currentTile, WorldTile targetTile, Ant ant)
+    void move(WorldTile currentTile, WorldTile targetTile, Ant ant)
     {
         targetTile.queueAntAdd(ant);
         currentTile.queueAntRemove(ant);
     }
 
-    public boolean ifDeadRemove(WorldTile currentTile)
+    boolean ifDeadRemove(WorldTile currentTile)
     {
         if (this.isDead)
         {

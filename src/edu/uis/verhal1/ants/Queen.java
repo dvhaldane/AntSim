@@ -17,12 +17,12 @@ public class Queen extends Ant implements TickAction
         this.lifeInDays = 365 * 20;
     }
 
-    public void eat(WorldTile tile)
+    private void eat(WorldTile tile)
     {
         tile.setFood(tile.getFood() - 1);
     }
 
-    public void hatch(WorldTile tile)
+    private void hatch(WorldTile tile)
     {
         Random random = new Random();
 
@@ -55,7 +55,7 @@ public class Queen extends Ant implements TickAction
             this.eat(tile);
         }
 
-        if (world.getDayChanged() == true)
+        if (world.getDayChanged())
         {
             this.hatch(tile);
             this.decrementLifeOneDay();

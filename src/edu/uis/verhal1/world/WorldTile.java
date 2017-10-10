@@ -20,15 +20,15 @@ public class WorldTile
     private int soldierCount;
     private int food;
     private int pheremone;
-    private int posX;
-    private int posY;
+    private final int posX;
+    private final int posY;
     private boolean isWorldSpawn;
     private ColonyNodeView node;
 
-    private HashMap<Integer, Ant> antMap = new HashMap<>();
+    private final HashMap<Integer, Ant> antMap = new HashMap<>();
 
-    private List<Ant> addQueue = new ArrayList<Ant>();
-    private List<Ant> removeQueue = new ArrayList<Ant>();
+    private final List<Ant> addQueue = new ArrayList<Ant>();
+    private final List<Ant> removeQueue = new ArrayList<Ant>();
 
     public WorldTile(int posX, int posY)
     {
@@ -196,9 +196,7 @@ public class WorldTile
 
     public Point getCoordinates()
     {
-        Point coords = new Point(posX,posY);
-
-        return coords;
+        return new Point(posX,posY);
     }
 
 }

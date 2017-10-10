@@ -6,10 +6,10 @@ import edu.uis.verhal1.world.WorldTile;
 
 import java.util.*;
 
-public abstract class NodeManager
+abstract class NodeManager
 {
 
-    static HashMap<ColonyNodeView, WorldTile> queuedNodesForRefresh = new HashMap<>();
+    private static final HashMap<ColonyNodeView, WorldTile> queuedNodesForRefresh = new HashMap<>();
 
     public static void addToRefreshQueue(ColonyNodeView node, WorldTile tile)
     {
@@ -19,12 +19,11 @@ public abstract class NodeManager
     public static void updateQueuedNodeDisplay()
     {
         Set set = queuedNodesForRefresh.entrySet();
-        Iterator iterator = set.iterator();
-        while (iterator.hasNext())
+        for (Object aSet : set)
         {
-            Map.Entry mapEntry = (Map.Entry) iterator.next();
+            Map.Entry mapEntry = (Map.Entry) aSet;
 
-            updateNodeDisplay((ColonyNodeView)mapEntry.getKey(), (WorldTile)mapEntry.getValue());
+            updateNodeDisplay((ColonyNodeView) mapEntry.getKey(), (WorldTile) mapEntry.getValue());
         }
 
         queuedNodesForRefresh.clear();

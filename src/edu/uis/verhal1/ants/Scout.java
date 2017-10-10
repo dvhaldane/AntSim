@@ -44,7 +44,7 @@ public class Scout extends Ant implements TickAction
 
             move(tile, targetTile, this);
 
-            if (targetTile.getRevealed() == false)
+            if (!targetTile.getRevealed())
             {
                 int foodChance = random.nextInt(100);
 
@@ -58,7 +58,7 @@ public class Scout extends Ant implements TickAction
 
             }
 
-            if (world.getDayChanged() == true)
+            if (world.getDayChanged())
             {
                 this.decrementLifeOneDay();
             }

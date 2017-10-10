@@ -9,7 +9,6 @@ import javax.swing.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -17,18 +16,18 @@ import java.util.Set;
 /**
  * Created by HaldaneDavidV on 10/7/2017.
  */
-public class GameManager implements ActionListener
+class GameManager implements ActionListener
 {
-    private int colonyHeight;
-    private int colonyWidth;
+    private final int colonyHeight;
+    private final int colonyWidth;
     private int colonyMidpointX;
     private int colonyMidpointY;
-    private String endMessage = "Game has ended due to reason: ";
-    private String endReason_QUEEN = "The Queen has died.";
+    private final String endMessage = "Game has ended due to reason: ";
+    private final String endReason_QUEEN = "The Queen has died.";
     private AntSimGUI gui;
     private ColonyView view;
-    private Timer gameTick = new Timer(10,this);
-    private World world = new World();
+    private final Timer gameTick = new Timer(10,this);
+    private final World world = new World();
 
     GameManager()
     {
@@ -155,10 +154,9 @@ public class GameManager implements ActionListener
 
                     //Do Ant Ticks
                     Set set = tile.getAntMap().entrySet();
-                    Iterator iterator = set.iterator();
-                    while (iterator.hasNext())
+                    for (Object aSet : set)
                     {
-                        Map.Entry mapEntry = (Map.Entry)iterator.next();
+                        Map.Entry mapEntry = (Map.Entry) aSet;
 
                         Object o = mapEntry.getValue();
 
@@ -166,23 +164,19 @@ public class GameManager implements ActionListener
                         {
                             tile.setBalaCount(tile.getBalaCount() + 1);
                             ((Bala) o).doTickAction(world, tile);
-                        }
-                        else if (o instanceof Forager)
+                        } else if (o instanceof Forager)
                         {
                             tile.setForagerCount(tile.getForagerCount() + 1);
                             ((Forager) o).doTickAction(world, tile);
-                        }
-                        else if (o instanceof Scout)
+                        } else if (o instanceof Scout)
                         {
                             tile.setScoutCount(tile.getScoutCount() + 1);
                             ((Scout) o).doTickAction(world, tile);
-                        }
-                        else if (o instanceof Soldier)
+                        } else if (o instanceof Soldier)
                         {
                             tile.setSoldierCount(tile.getSoldierCount() + 1);
                             ((Soldier) o).doTickAction(world, tile);
-                        }
-                        else if (o instanceof Queen)
+                        } else if (o instanceof Queen)
                         {
                             ((Queen) o).doTickAction(world, tile);
 

@@ -8,14 +8,14 @@ import java.util.Random;
  */
 public class World
 {
-    private int colonyWidth;
-    private int colonyHeight;
+    private final int colonyWidth;
+    private final int colonyHeight;
     private int day;
     private boolean dayChanged;
     private boolean queenIsDead = false;
     private int turn;
     private boolean continuousMode;
-    private WorldTile[][] worldTileMap;
+    private final WorldTile[][] worldTileMap;
 
     public World()
     {
