@@ -1,6 +1,7 @@
 package edu.uis.verhal1.world;
 
 import edu.uis.verhal1.ants.Ant;
+import edu.uis.verhal1.ants.Forager;
 import edu.uis.verhal1.gui.ColonyNodeView;
 
 import java.awt.*;
@@ -65,7 +66,7 @@ public class WorldTile
         removeQueue.add(ant);
     }
 
-    public void mergeQueue()
+    public void mergeAntQueue()
     {
         for (Ant ant : addQueue)
         {
@@ -74,6 +75,13 @@ public class WorldTile
 
         for (Ant ant : removeQueue)
         {
+            if (ant.isDead())
+            {
+                if (ant.getType() == "FORAGER" && ant.isDead())
+                {
+                    this.setFood(((Forager) ant).getFood() + this.getFood());
+                }
+            }
             antMap.remove(ant.getID(),ant);
         }
 
@@ -166,6 +174,14 @@ public class WorldTile
     public void setPheremone(int pheremone)
     {
         this.pheremone = pheremone;
+    }
+
+    public void degradePheremone()
+    {
+        if (this.pheremone > 1)
+        {
+            this.pheremone = this.pheremone / 2;
+        }
     }
 
     public boolean isWorldSpawn()

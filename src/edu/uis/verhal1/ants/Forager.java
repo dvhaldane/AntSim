@@ -28,28 +28,32 @@ public class Forager extends Ant implements TickAction
     @Override
     public void doTickAction(World world, WorldTile tile)
     {
-
-        if (food < foodCapacity)
+        if (ifDeadRemove(tile))
         {
-
-            if (tile.getFood() > 0 && tile.isWorldSpawn() == false)
-            {
-                food = 1;
-                tile.setFood(tile.getFood() - 1);
-            }
-            else
-            {
-                forage(world, tile);
-            }
+            return;
         }
         else
         {
-            returnToNest(world, tile);
-        }
+            if (food < foodCapacity)
+            {
 
-        if (world.getDayChanged() == true)
-        {
-            this.decrementLifeOneDay();
+                if (tile.getFood() > 0 && tile.isWorldSpawn() == false)
+                {
+                    food = 1;
+                    tile.setFood(tile.getFood() - 1);
+                } else
+                {
+                    forage(world, tile);
+                }
+            } else
+            {
+                returnToNest(world, tile);
+            }
+
+            if (world.getDayChanged() == true)
+            {
+                this.decrementLifeOneDay();
+            }
         }
 
     }
@@ -84,9 +88,12 @@ public class Forager extends Ant implements TickAction
             {
                 tempMoveToCoords = world.getTileFromTilemap(x,y).getCoordinates();
 
-                if (world.getTileFromTilemap(x, y).getPheremone() > world.getTileFromTilemap(tempMoveToCoords).getPheremone())
+                if (movementHistory.size() == 0 || tempMoveToCoords != movementHistory.get(movementHistory.size() - 1))
                 {
-                    tempMoveToCoords = world.getTileFromTilemap(x, y).getCoordinates();
+                    if (world.getTileFromTilemap(x, y).getPheremone() > world.getTileFromTilemap(tempMoveToCoords).getPheremone())
+                    {
+                        tempMoveToCoords = world.getTileFromTilemap(x, y).getCoordinates();
+                    }
                 }
             }
         }

@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -26,7 +27,7 @@ public class GameManager implements ActionListener
     private String endReason_QUEEN = "The Queen has died.";
     private AntSimGUI gui;
     private ColonyView view;
-    private Timer gameTick = new Timer(100,this);
+    private Timer gameTick = new Timer(10,this);
     private World world = new World();
 
     GameManager()
@@ -108,6 +109,20 @@ public class GameManager implements ActionListener
         JOptionPane.showMessageDialog(view,endMessage + endReason_QUEEN);
     }
 
+    private boolean shouldHatchBala()
+    {
+        Random random = new Random();
+
+        int roll = random.nextInt(100);
+
+        if (roll < 3)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     private void performGameTick()
     {
 
@@ -126,7 +141,7 @@ public class GameManager implements ActionListener
 
         GUIManager.updateWorldTime(gui, world);
 
-        //Do Ticks Per Tile
+        //Process Tiles
         for (int i = 0; i < world.getWorldTileMap().length; i++)
         {
             for (int j = 0; j <world.getWorldTileMap()[i].length; j++)
@@ -181,6 +196,14 @@ public class GameManager implements ActionListener
             }
         }
 
+        //Spawn a bala
+        if (shouldHatchBala())
+        {
+            Bala bala = new Bala();
+            world.getTileFromTilemap(bala.getStartPoint()).addAnt(bala);
+        }
+
+        //Postprocess Tiles
         for (int i = 0; i < world.getWorldTileMap().length; i++)
         {
             for (int j = 0; j < world.getWorldTileMap()[i].length; j++)
@@ -189,18 +212,17 @@ public class GameManager implements ActionListener
                 {
                     WorldTile tile = world.getWorldTileMap()[i][j];
 
-                    tile.mergeQueue();
+                    tile.mergeAntQueue();
 
                     if (tile.getNode().visible() || tile.getRevealed())
                     {
                         if (world.getDayChanged())
                         {
-                            if (tile.getPheremone() > 1)
-                            {
-                                tile.setPheremone(tile.getPheremone() / 2);
-                            }
+                            tile.degradePheremone();
                         }
+
                         NodeManager.updateNodeDisplay(tile.getNode(), tile);
+
                     }
                 }
             }

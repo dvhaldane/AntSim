@@ -42,22 +42,26 @@ public class Ant
         this.isDead = true;
     }
 
+    public boolean isDead()
+    {
+        return this.isDead;
+    }
+
     public int getID()
     {
         return this.id;
     }
 
-    public boolean isDead()
-    {
-        if (isDead)
-            return true;
-        else
-            return false;
-    }
-
     public void decrementLifeOneDay()
     {
-        this.lifeInDays--;
+        if (this.lifeInDays > 0)
+        {
+            this.lifeInDays--;
+        }
+        else
+        {
+            this.kill();
+        }
     }
 
     public String getType()
@@ -84,6 +88,17 @@ public class Ant
     {
         targetTile.queueAntAdd(ant);
         currentTile.queueAntRemove(ant);
+    }
+
+    public boolean ifDeadRemove(WorldTile currentTile)
+    {
+        if (this.isDead)
+        {
+            currentTile.queueAntRemove(this);
+            return true;
+        }
+
+        return false;
     }
 
 
