@@ -56,7 +56,10 @@ public class Bala extends Ant implements TickAction
                         if (this.getID() != tile.getAntMap().get(selectedKey).getID())
                         {
                             tile.getAntMap().get(selectedKey).kill();
-                            tile.queueAntRemove(tile.getAntMap().get(selectedKey));
+                            if (tile.getAntMap().get(selectedKey).getID() != 0)
+                            {
+                                tile.queueAntRemove(tile.getAntMap().get(selectedKey));
+                            }
                         }
 
                     }
