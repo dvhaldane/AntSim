@@ -1,35 +1,43 @@
 package edu.uis.verhal1.world;
 
+import java.awt.*;
+import java.util.Random;
+
 /**
  * Created by HaldaneDavidV on 10/7/2017.
  */
 public class World
 {
+    private final int colonyWidth;
+    private final int colonyHeight;
     private int day;
     private boolean dayChanged;
-    private boolean endGame = false;
+    private boolean queenIsDead = false;
     private int turn;
     private boolean continuousMode;
-    private WorldTile[][] worldTileMap;
+    private final WorldTile[][] worldTileMap;
 
     public World()
     {
         day = 0;
         turn = 0;
+        colonyWidth = 27;
+        colonyHeight = 27;
         continuousMode = false;
         worldTileMap = new WorldTile[27][27];
         dayChanged = false;
     }
 
-    public void endGame()
+    public void setQueenIsDead()
     {
-        this.endGame = true;
+        this.queenIsDead = true;
     }
 
-    public Boolean getEndGame()
+    public Boolean getQueenIsDead()
     {
-        return endGame;
+        return queenIsDead;
     }
+
     public int getDay()
     {
         return this.day;
@@ -44,6 +52,16 @@ public class World
     {
         this.day += 1;
         this.dayChanged = true;
+    }
+
+    public int getColonyWidth()
+    {
+        return this.colonyWidth;
+    }
+
+    public int getColonyHeight()
+    {
+        return this.colonyHeight;
     }
 
     public boolean getContinuousMode()
@@ -81,14 +99,36 @@ public class World
         this.turn += 1;
     }
 
-    public WorldTile getTile(int x, int y)
+    public WorldTile getTileFromTilemap(int x, int y)
     {
         return worldTileMap[x][y];
     }
 
-    public void setTile(WorldTile tile, int x, int y)
+    public WorldTile getTileFromTilemap(Point p)
+    {
+        return worldTileMap[(int)p.getX()][(int)p.getY()];
+    }
+
+    public void addTileToTileMap(WorldTile tile, int x, int y)
     {
         worldTileMap[x][y] = tile;
+    }
+
+    public void addTileToTileMap(int x, int y)
+    {
+        worldTileMap[x][y] = new WorldTile(x,y);
+
+        Random random = new Random();
+        int foodGenChance = random.nextInt(100);
+
+        if (foodGenChance >= 75)
+        {
+            int food = random.nextInt(501) + 500;
+
+            worldTileMap[x][y].setFood(food);
+        }
+
+
     }
 
     public WorldTile[][] getWorldTileMap()

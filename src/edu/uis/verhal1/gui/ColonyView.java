@@ -95,8 +95,4 @@ public class ColonyView extends JPanel
 		nodeView.hideNode();
 	}
 
-	public void getColonyNodeView(String id)
-	{
-
-	}
 }

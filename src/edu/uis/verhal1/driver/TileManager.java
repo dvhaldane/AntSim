@@ -6,10 +6,16 @@ import edu.uis.verhal1.ants.Scout;
 import edu.uis.verhal1.ants.Soldier;
 import edu.uis.verhal1.world.WorldTile;
 
-public abstract class TileManager
+import java.util.ArrayList;
+
+abstract class TileManager
 {
-    public static void setSpawnTile(WorldTile tile)
+    private static final ArrayList<WorldTile> pendingForRefresh = new ArrayList<>();
+
+    public static void createSpawnTile(WorldTile tile)
     {
+        tile.setWorldSpawn();
+
         tile.setFood(1000);
 
         Queen queen = new Queen();
@@ -19,18 +25,36 @@ public abstract class TileManager
         {
             Soldier soldier = new Soldier();
             tile.addAnt(soldier);
+            tile.setSoldierCount(tile.getSoldierCount() + 1);
         }
 
         for (int i = 0; i < 50; i++)
         {
             Forager forager = new Forager();
             tile.addAnt(forager);
+            tile.setForagerCount(tile.getForagerCount() + 1);
         }
 
-        for (int i = 0; i < 4; i ++)
+        for (int i = 0; i < 5; i ++)
         {
             Scout scout = new Scout();
             tile.addAnt(scout);
+            tile.setScoutCount(tile.getScoutCount() + 1);
         }
+
+    }
+
+    public static void mergePendingQueue()
+    {
+        for (WorldTile tile : pendingForRefresh)
+        {
+            NodeManager.updateNodeDisplay(tile.getNode(), tile);
+        }
+
+    }
+
+    public static void queueTileForRefresh(WorldTile tile)
+    {
+        pendingForRefresh.add(tile);
     }
 }

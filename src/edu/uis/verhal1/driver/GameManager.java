@@ -1,34 +1,38 @@
 package edu.uis.verhal1.driver;
 
+import edu.uis.verhal1.ants.*;
 import edu.uis.verhal1.gui.*;
 import edu.uis.verhal1.world.World;
 import edu.uis.verhal1.world.WorldTile;
 
-import javax.swing.Timer;
+import javax.swing.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 /**
  * Created by HaldaneDavidV on 10/7/2017.
  */
-public class GameManager implements ActionListener
+class GameManager implements ActionListener
 {
-    private int colonyHeight;
-    private int colonyWidth;
+    private final int colonyHeight;
+    private final int colonyWidth;
     private int colonyMidpointX;
     private int colonyMidpointY;
-    private ColonyView view;
-    private World world;
+    private final String endMessage = "Game has ended due to reason: ";
+    private final String endReason_QUEEN = "The Queen has died.";
     private AntSimGUI gui;
-
-    boolean gameEnd = false;
-    private Timer gameTick = new Timer(1000,this);
+    private ColonyView view;
+    private final Timer gameTick = new Timer(10,this);
+    private final World world = new World();
 
     GameManager()
     {
-        colonyHeight = 27;
-        colonyWidth = 27;
+        colonyHeight = world.getColonyHeight();
+        colonyWidth = world.getColonyWidth();
         performGameSetup();
         gameTick.start();
     }
@@ -36,40 +40,50 @@ public class GameManager implements ActionListener
     private void performGameSetup()
     {
 
-        //Set GUI Constraints
         gui = new AntSimGUI();
 
-        //Get Colony Midpoints
         colonyMidpointY = (colonyHeight - 1) / 2;
         colonyMidpointX = (colonyWidth -1 ) / 2;
-        System.out.println(colonyMidpointX);
-        System.out.println(colonyMidpointY);
 
         view = new ColonyView(colonyHeight, colonyWidth);
 
-        //Build World
-        world = new World();
 
-        //Build Spawn Tile
-        WorldTile spawnTile = new WorldTile(colonyMidpointX, colonyMidpointY);
-        TileManager.setSpawnTile(spawnTile);
 
-        ColonyNodeView spawnNode = new ColonyNodeView();
-        NodeManager.setSpawnNode(spawnNode);
+        //Build Starting Tiles
+        for (int x = 0; x < colonyWidth; x ++)
+        {
+            for (int y = 0; y < colonyHeight; y++)
+            {
+                WorldTile tile = new WorldTile(x, y);
+                ColonyNodeView node = new ColonyNodeView();
 
-        //Build Adjacent Tiles
-        //Update GUI
-        NodeManager.updateNodeDisplay(spawnNode, spawnTile);
+                if (x > colonyMidpointX - 2 && x < colonyMidpointX + 2 && y > colonyMidpointY - 2 && y < colonyMidpointY + 2)
+                {
+                    if (x == colonyMidpointX && y == colonyMidpointY)
+                    {
+                        NodeManager.createSpawnNode(node);
+                        TileManager.createSpawnTile(tile);
+                    }
 
-        //Add Node to GUI World Board and WorldTileMap
-        WorldManager.addToTileMap(world, spawnTile, colonyMidpointX, colonyMidpointY);
-        view.addColonyNodeView(spawnNode, colonyMidpointX, colonyMidpointY);
+                    view.addColonyNodeView(node, x, y);
+                    tile.setNode(node);
+                    NodeManager.updateNodeDisplay(node, tile);
+                    world.addTileToTileMap(tile, x, y);
+                }
+                else
+                {
+                    view.addColonyNodeView(node, x, y);
+                    tile.setNode(node);
+                    world.addTileToTileMap(tile, x, y);
+                }
 
-        //Init the GUI
+
+            }
+        }
+
         gui.initGUI(view);
 
         //Post GUI Generation Settings
-        spawnNode.showNode();
         gui.centerScrollBars();
         GUIManager.updateWorldTime(gui, world);
 
@@ -78,14 +92,34 @@ public class GameManager implements ActionListener
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        if (gameEnd)
+
+        performGameTick();
+
+        if (world.getQueenIsDead())
         {
-            gameTick.stop();
+            endGame();
         }
-        else
+
+    }
+
+    private void endGame()
+    {
+        gameTick.stop();
+        JOptionPane.showMessageDialog(view,endMessage + endReason_QUEEN);
+    }
+
+    private boolean shouldHatchBala()
+    {
+        Random random = new Random();
+
+        int roll = random.nextInt(100);
+
+        if (roll < 3)
         {
-            performGameTick();
+            return true;
         }
+
+        return false;
     }
 
     private void performGameTick()
@@ -97,17 +131,16 @@ public class GameManager implements ActionListener
         if (world.getTurn() > 0 && world.getTurn() % 10 == 0)
         {
             world.incrementDay();
+            world.setDayChanged(true);
+        }
+        else
+        {
+            world.setDayChanged(false);
         }
 
         GUIManager.updateWorldTime(gui, world);
 
-        if (world.getEndGame() == true)
-        {
-            gameTick.stop();
-        }
-
-
-        //Do ticks per tile
+        //Process Tiles
         for (int i = 0; i < world.getWorldTileMap().length; i++)
         {
             for (int j = 0; j <world.getWorldTileMap()[i].length; j++)
@@ -115,22 +148,82 @@ public class GameManager implements ActionListener
                 if (world.getWorldTileMap()[i][j] != null)
                 {
                     WorldTile tile = world.getWorldTileMap()[i][j];
-                    AntManager.doAntListGameTick(world, tile, tile.getAntList());
 
-                    ColonyNodeView node = new ColonyNodeView();
-                    NodeManager.updateNodeDisplay(node, tile);
-                    view.addColonyNodeView(node, i, j);
+                    //Perform ant counts while iterating through ants
+                    tile.resetCounts();
 
-
-                    if (i == colonyMidpointX && j == colonyMidpointY)
+                    //Do Ant Ticks
+                    Set set = tile.getAntMap().entrySet();
+                    for (Object aSet : set)
                     {
-                        node.setQueen(true);
-                    }
+                        Map.Entry mapEntry = (Map.Entry) aSet;
 
-                    node.showNode();
+                        Object o = mapEntry.getValue();
+
+                        if (o instanceof Bala)
+                        {
+                            tile.setBalaCount(tile.getBalaCount() + 1);
+                            ((Bala) o).doTickAction(world, tile);
+                        } else if (o instanceof Forager)
+                        {
+                            tile.setForagerCount(tile.getForagerCount() + 1);
+                            ((Forager) o).doTickAction(world, tile);
+                        } else if (o instanceof Scout)
+                        {
+                            tile.setScoutCount(tile.getScoutCount() + 1);
+                            ((Scout) o).doTickAction(world, tile);
+                        } else if (o instanceof Soldier)
+                        {
+                            tile.setSoldierCount(tile.getSoldierCount() + 1);
+                            ((Soldier) o).doTickAction(world, tile);
+                        } else if (o instanceof Queen)
+                        {
+                            ((Queen) o).doTickAction(world, tile);
+
+                            if (((Queen) o).isDead())
+                            {
+                                world.setQueenIsDead();
+                            }
+                        }
+                    }
                 }
             }
         }
+
+        //Spawn a bala
+        if (shouldHatchBala())
+        {
+            Bala bala = new Bala();
+            world.getTileFromTilemap(bala.getStartPoint()).addAnt(bala);
+        }
+
+        //Postprocess Tiles
+        for (int i = 0; i < world.getWorldTileMap().length; i++)
+        {
+            for (int j = 0; j < world.getWorldTileMap()[i].length; j++)
+            {
+                if (world.getWorldTileMap()[i][j] != null)
+                {
+                    WorldTile tile = world.getWorldTileMap()[i][j];
+
+                    tile.mergeAntQueue();
+
+                    if (tile.getNode().visible() || tile.getRevealed())
+                    {
+                        if (world.getDayChanged())
+                        {
+                            tile.degradePheremone();
+                        }
+
+                        NodeManager.updateNodeDisplay(tile.getNode(), tile);
+
+                    }
+                }
+            }
+        }
+
+        System.gc();
+
 
 
 
