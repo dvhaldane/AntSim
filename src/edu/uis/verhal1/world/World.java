@@ -8,24 +8,22 @@ import java.util.Random;
  */
 public class World
 {
-    private final int colonyWidth;
-    private final int colonyHeight;
-    private int day;
-    private boolean dayChanged;
+    private int day = 0;
+    private int turn = 0;
+    private final int colonyWidth = 27;
+    private final int colonyHeight = 27;
+    private boolean continuousMode = false;
+    private final WorldTile[][] worldTileMap = new WorldTile[27][27];
+    private boolean dayChanged = false;
     private boolean queenIsDead = false;
-    private int turn;
-    private boolean continuousMode;
-    private final WorldTile[][] worldTileMap;
 
     public World()
     {
-        day = 0;
-        turn = 0;
-        colonyWidth = 27;
-        colonyHeight = 27;
-        continuousMode = false;
-        worldTileMap = new WorldTile[27][27];
-        dayChanged = false;
+        this.day = day;
+        this.turn = turn;
+        this.continuousMode = continuousMode;
+        this.dayChanged = dayChanged;
+        this.queenIsDead = queenIsDead;
     }
 
     public void setQueenIsDead()
@@ -72,6 +70,18 @@ public class World
     public void setContinousMode(Boolean mode)
     {
         this.continuousMode = mode;
+    }
+
+    public void reset()
+    {
+        this.day = day;
+        this.turn = turn;
+        this.continuousMode = continuousMode;
+        this.dayChanged = dayChanged;
+        this.queenIsDead = queenIsDead;
+
+        System.out.println(day);
+        System.out.println(turn);
     }
 
     public boolean getDayChanged()

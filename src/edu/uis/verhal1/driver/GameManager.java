@@ -1,12 +1,9 @@
 package edu.uis.verhal1.driver;
-
 import edu.uis.verhal1.ants.*;
 import edu.uis.verhal1.gui.*;
 import edu.uis.verhal1.world.World;
 import edu.uis.verhal1.world.WorldTile;
-
 import javax.swing.*;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Map;
@@ -16,7 +13,7 @@ import java.util.Set;
 /**
  * Created by HaldaneDavidV on 10/7/2017.
  */
-class GameManager implements ActionListener
+class GameManager implements ActionListener, SimulationEventListener
 {
     private final int colonyHeight;
     private final int colonyWidth;
@@ -26,7 +23,7 @@ class GameManager implements ActionListener
     private final String endReason_QUEEN = "The Queen has died.";
     private AntSimGUI gui;
     private ColonyView view;
-    private final Timer gameTick = new Timer(10,this);
+    private final Timer gameTick = new Timer(2,this);
     private final World world = new World();
 
     GameManager()
@@ -34,21 +31,59 @@ class GameManager implements ActionListener
         colonyHeight = world.getColonyHeight();
         colonyWidth = world.getColonyWidth();
         performGameSetup();
-        gameTick.start();
+    }
+
+    public void simulationEventOccurred(SimulationEvent simEvent)
+    {
+        if (simEvent.getEventType() == SimulationEvent.NORMAL_SETUP_EVENT)
+        {
+            gameTick.stop();
+            performGameSetup();
+        }
+        else if (simEvent.getEventType() == SimulationEvent.RUN_EVENT)
+        {
+            if (gameTick.isRunning())
+            {
+                gameTick.stop();
+
+            }
+            else
+            {
+                gameTick.start();
+            }
+        }
+        else if (simEvent.getEventType() == SimulationEvent.STEP_EVENT)
+        {
+            gameTick.stop();
+            performGameTick();
+        }
+        else
+        {
+            System.out.println("Invalid");
+        }
     }
 
     private void performGameSetup()
     {
-
         gui = new AntSimGUI();
-
         colonyMidpointY = (colonyHeight - 1) / 2;
         colonyMidpointX = (colonyWidth -1 ) / 2;
-
         view = new ColonyView(colonyHeight, colonyWidth);
 
+        //Build Starting Tiles
+        setStartingTiles();
 
+        gui.initGUI(view);
 
+        //Post GUI Generation Settings
+        gui.centerScrollBars();
+        GUIManager.updateWorldTime(gui, world);
+        gui.addSimulationEventListener(this);
+
+    }
+
+    private void setStartingTiles()
+    {
         //Build Starting Tiles
         for (int x = 0; x < colonyWidth; x ++)
         {
@@ -76,17 +111,8 @@ class GameManager implements ActionListener
                     tile.setNode(node);
                     world.addTileToTileMap(tile, x, y);
                 }
-
-
             }
         }
-
-        gui.initGUI(view);
-
-        //Post GUI Generation Settings
-        gui.centerScrollBars();
-        GUIManager.updateWorldTime(gui, world);
-
     }
 
     @Override
@@ -111,7 +137,6 @@ class GameManager implements ActionListener
     private boolean shouldHatchBala()
     {
         Random random = new Random();
-
         int roll = random.nextInt(100);
 
         if (roll < 3)
@@ -223,11 +248,6 @@ class GameManager implements ActionListener
         }
 
         System.gc();
-
-
-
-
-
 
     }
 }

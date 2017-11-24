@@ -20,7 +20,6 @@ public class Queen extends Ant implements TickAction
     private void eat(WorldTile tile)
     {
         tile.setFood(tile.getFood() - 1);
-        System.out.println(tile.getFood());
     }
 
     private void hatch(WorldTile tile)

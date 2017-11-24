@@ -199,7 +199,7 @@ public class AntSimGUI extends JFrame
 	{
 		// create event
 		SimulationEvent simEvent = new SimulationEvent(this, eventType);
-		
+
 		// inform all listeners
 		for (Iterator itr = simulationEventListenerList.iterator(); itr.hasNext(); )
 		{
@@ -284,24 +284,24 @@ public class AntSimGUI extends JFrame
 			normalSetupButton.setToolTipText("Set up simulation for normal execution");
 			
 			// queen test button
-			queenTestButton = new JButton("Queen Test");
-			queenTestButton.addActionListener(buttonHandler);
-			queenTestButton.setToolTipText("Set up simulation for testing the queen ant");
+			//queenTestButton = new JButton("Queen Test");
+			//queenTestButton.addActionListener(buttonHandler);
+			//queenTestButton.setToolTipText("Set up simulation for testing the queen ant");
 			
 			// scout test button
-			scoutTestButton = new JButton("Scout Test");
-			scoutTestButton.addActionListener(buttonHandler);
-			scoutTestButton.setToolTipText("Set up simulation for testing the scout ant");
+			//scoutTestButton = new JButton("Scout Test");
+			//scoutTestButton.addActionListener(buttonHandler);
+			//scoutTestButton.setToolTipText("Set up simulation for testing the scout ant");
 			
 			// forager test button
-			foragerTestButton = new JButton("Forager Test");
-			foragerTestButton.addActionListener(buttonHandler);
-			foragerTestButton.setToolTipText("Set up simulation for testing the forager ant");
+			//foragerTestButton = new JButton("Forager Test");
+			//foragerTestButton.addActionListener(buttonHandler);
+			//foragerTestButton.setToolTipText("Set up simulation for testing the forager ant");
 			
 			// soldier test button
-			soldierTestButton = new JButton("Soldier Test");
-			soldierTestButton.addActionListener(buttonHandler);
-			soldierTestButton.setToolTipText("Set up simulation for testing the soldier ant");
+			//soldierTestButton = new JButton("Soldier Test");
+			//soldierTestButton.addActionListener(buttonHandler);
+			//soldierTestButton.setToolTipText("Set up simulation for testing the soldier ant");
 			
 			// button for running simulation continuously
 			runButton = new JButton("Run");
@@ -325,10 +325,10 @@ public class AntSimGUI extends JFrame
 		private void layoutComponents()
 		{
 			this.add(normalSetupButton);
-			this.add(queenTestButton);
-			this.add(scoutTestButton);
-			this.add(foragerTestButton);
-			this.add(soldierTestButton);
+			//this.add(queenTestButton);
+			//this.add(scoutTestButton);
+			//this.add(foragerTestButton);
+			//this.add(soldierTestButton);
 			this.add(runButton);
 			this.add(stepButton);
 			this.add(timeLabel);
@@ -394,15 +394,26 @@ public class AntSimGUI extends JFrame
 					// set for testing the soldier ant
 					fireSimulationEvent(SimulationEvent.SOLDIER_TEST_EVENT);
 				}
-				else if (b.getText().equals("Run"))
+				else if (b.getText().equals("Run") || b.getText().equals("Stop"))
 				{
 					// run the simulation continuously
 					fireSimulationEvent(SimulationEvent.RUN_EVENT);
+
+					if (b.getText().equals("Run"))
+					{
+						b.setText("Stop");
+					}
+					else
+					{
+						b.setText("Run");
+					}
+
 				}
 				else if (b.getText().equals("Step"))
 				{
 					// run the simulation one turn at a time
 					fireSimulationEvent(SimulationEvent.STEP_EVENT);
+					runButton.setText("Run");
 				}
 			}
 		}
