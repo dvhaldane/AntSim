@@ -96,6 +96,15 @@ abstract class NodeManager
         }
 
 
+        if (tile.getFood() > 0)
+        {
+            node.setFoodColor();
+        }
+        else
+        {
+            node.removeFoodColor();
+        }
+
         node.setBalaCount(balaCount);
         node.setForagerCount(foragerCount);
         node.setPheromoneLevel(tile.getPheremone());

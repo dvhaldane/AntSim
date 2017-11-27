@@ -396,6 +396,16 @@ public class ColonyNodeView extends JPanel
 	{
 		foodLabel.setText("Food: " + food);
 	}
+
+	public void setFoodColor()
+	{
+		foodLabel.setForeground(new Color(76,153,0));
+	}
+
+	public void removeFoodColor()
+	{
+		foodLabel.setForeground(Color.black);
+	}
 	
 	
 	/**

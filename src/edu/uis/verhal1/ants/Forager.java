@@ -179,7 +179,7 @@ public class Forager extends Ant implements TickAction
         {
             for (Point p : world.blacklistedPoints)
             {
-                if (world.getTileFromTilemap(p).getPheremone() < 100)
+                if (world.getTileFromTilemap(p).getPheremone() == 1)
                 {
                     toRemove.add(p);
                 }
@@ -249,7 +249,7 @@ public class Forager extends Ant implements TickAction
         }
 
         int dupes = 0;
-        int dupethreshold = 12;
+        int dupethreshold = 9;
 
         for (int i = 0; i < 4; i++)
         {
@@ -266,8 +266,7 @@ public class Forager extends Ant implements TickAction
 
         if (dupes > dupethreshold)
         {
-            System.out.println("Resolving Loop");
-            if (tile.getPheremone() > 800)
+            if (tile.getPheremone() > 800 && tile.getFood() == 0)
             {
                 world.blacklistedPoints.add(tile.getCoordinates());
             }

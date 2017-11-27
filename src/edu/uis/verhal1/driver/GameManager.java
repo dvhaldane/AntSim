@@ -218,8 +218,8 @@ class GameManager implements ActionListener, SimulationEventListener
         //Spawn a bala
         if (shouldHatchBala())
         {
-            //Bala bala = new Bala();
-            //world.getTileFromTilemap(bala.getStartPoint()).addAnt(bala);
+            Bala bala = new Bala();
+            world.getTileFromTilemap(bala.getStartPoint()).addAnt(bala);
         }
 
         //Postprocess Tiles
