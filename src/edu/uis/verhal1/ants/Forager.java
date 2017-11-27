@@ -5,8 +5,10 @@ import edu.uis.verhal1.world.World;
 import edu.uis.verhal1.world.WorldTile;
 
 import java.awt.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * Created by HaldaneDavidV on 10/7/2017.
@@ -16,7 +18,10 @@ public class Forager extends Ant implements TickAction
     private int food;
     private final int foodCapacity;
     private boolean foraging = true;
-    private final ArrayList<Point> movementHistory = new ArrayList<>();
+    private ArrayList<Point> movementHistory = new ArrayList<>();
+    private boolean resolvingLoop = false;
+    private int resolveCount = 0;
+    private int resolveLimit = 4;
 
     public Forager()
     {
@@ -68,11 +73,13 @@ public class Forager extends Ant implements TickAction
     {
 
         ArrayList<Point> validPointsForMovementCalc = getValidMovementPoints(world, pointList, tile.getCoordinates());
+        HashMap<Point, Integer> pheremoneMap = new HashMap<>();
 
         Collections.shuffle(validPointsForMovementCalc);
 
         Point tempPoint = validPointsForMovementCalc.get(0);
 
+        //Declare and assign x y and tempMoveToCoords to be used within loop
         int x = (int)tile.getCoordinates().getX() - (int)tempPoint.getX();
         int y = (int)tile.getCoordinates().getY() - (int)tempPoint.getY();
 
@@ -81,6 +88,7 @@ public class Forager extends Ant implements TickAction
         //Move to square with highest level of pheremone
         for (Point p : validPointsForMovementCalc)
         {
+            boolean blacklisted = false;
             x = (int)tile.getCoordinates().getX() - (int)p.getX();
             y = (int)tile.getCoordinates().getY() - (int)p.getY();
 
@@ -88,18 +96,114 @@ public class Forager extends Ant implements TickAction
             {
                 tempMoveToCoords = world.getTileFromTilemap(x,y).getCoordinates();
 
-                if (movementHistory.size() == 0 || tempMoveToCoords != movementHistory.get(movementHistory.size() - 1))
+                if (world.blacklistedPoints.size() > 0)
                 {
-                    if (world.getTileFromTilemap(x, y).getPheremone() > world.getTileFromTilemap(tempMoveToCoords).getPheremone())
+                    for (Point bp : world.blacklistedPoints)
                     {
-                        tempMoveToCoords = world.getTileFromTilemap(x, y).getCoordinates();
+                        if (bp.equals(world.getTileFromTilemap(x,y).getCoordinates()))
+                        {
+                            blacklisted = true;
+                        }
                     }
+                }
+
+                //If has pheremone. Add for pheremone processing
+                if (world.getTileFromTilemap(x, y).getPheremone() > 0 && !blacklisted)
+                {
+                    pheremoneMap.put(world.getTileFromTilemap(x,y).getCoordinates(), world.getTileFromTilemap(x, y).getPheremone());
                 }
             }
         }
 
+        //Process pheremone tiles
+        if (resolveLoop(movementHistory, world, tile) && !resolvingLoop)
+        {
+            if (pheremoneMap.size() > 0)
+            {
+                ArrayList<Point> maxPheremoneTiles = new ArrayList<>();
+
+                int max = Collections.max(pheremoneMap.values());
+
+                if (movementHistory.size() > 0)
+                {
+                    //If the last moved square is in the pheremone map, remove this from the list of valid movements
+                    if (pheremoneMap.containsKey(movementHistory.get(movementHistory.size() - 1)))
+                    {
+                        System.out.println(pheremoneMap.size());
+                        pheremoneMap.remove((movementHistory.get(movementHistory.size() - 1)));
+                    }
+                }
+
+                if (pheremoneMap.size() > 0)
+                {
+
+                    for (HashMap.Entry<Point, Integer> entry : pheremoneMap.entrySet())
+                    {
+                        if (entry.getValue().equals(max))
+                        {
+                            maxPheremoneTiles.add(entry.getKey());
+                        }
+                    }
+
+                    //Set moveetocoord from max pheremone tile or randomly select if more than one max
+                    if (maxPheremoneTiles.size() > 1)
+                    {
+                        Collections.shuffle(maxPheremoneTiles);
+                    }
+
+                    tempMoveToCoords = maxPheremoneTiles.get(0);
+                }
+            }
+        }
+
+        if (resolvingLoop)
+        {
+            if (resolveCount == resolveLimit)
+            {
+                resolvingLoop = false;
+            }
+            else if (resolveCount == 0)
+            {
+                movementHistory = trimMovementHistory(movementHistory, tile);
+                resolveCount++;
+            }
+            else
+            {
+                resolveCount++;
+            }
+        }
+
+        ArrayList<Point> toRemove = new ArrayList<>();
+
+        if (world.blacklistedPoints.size() > 0)
+        {
+            for (Point p : world.blacklistedPoints)
+            {
+                if (world.getTileFromTilemap(p).getPheremone() < 100)
+                {
+                    toRemove.add(p);
+                }
+            }
+
+            if (toRemove.size() > 0)
+            {
+                for (Point p : toRemove)
+                {
+                    world.blacklistedPoints.remove(p);
+                }
+            }
+        }
+
+
+
+        if (tile.isWorldSpawn())
+        {
+            movementHistory.add(tile.getCoordinates());
+        }
+
+
          move(tile, world.getTileFromTilemap(tempMoveToCoords), this);
-         movementHistory.add(tile.getCoordinates());
+         movementHistory.add(tempMoveToCoords);
 
     }
 
@@ -123,6 +227,7 @@ public class Forager extends Ant implements TickAction
             if (foraging)
             {
                 Collections.reverse(movementHistory);
+                movementHistory.remove(0);
                 foraging = false;
             }
             if (tile.getPheremone() < 1000)
@@ -130,8 +235,63 @@ public class Forager extends Ant implements TickAction
                 tile.setPheremone(tile.getPheremone() + 10);
             }
             move(tile, world.getTileFromTilemap(movementHistory.get(0)), this);
+
             movementHistory.remove(0);
+
         }
     }
 
+    private boolean resolveLoop(ArrayList<Point> movementHistory, World world, WorldTile tile)
+    {
+        if (movementHistory.size() < 4)
+        {
+            return true;
+        }
+
+        int dupes = 0;
+        int dupethreshold = 12;
+
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < movementHistory.size(); j++)
+            {
+                if (movementHistory.get(i).equals(movementHistory.get(j)))
+                {
+                    dupes++;
+                }
+            }
+        }
+
+
+
+        if (dupes > dupethreshold)
+        {
+            System.out.println("Resolving Loop");
+            if (tile.getPheremone() > 800)
+            {
+                world.blacklistedPoints.add(tile.getCoordinates());
+            }
+            resolvingLoop = true;
+            return false;
+        }
+
+        return true;
+    }
+
+    private ArrayList<Point> trimMovementHistory(ArrayList<Point> movementHistory, WorldTile tile)
+    {
+        ArrayList<Point> tempHistory = new ArrayList<>();
+
+        for (Point p : movementHistory)
+        {
+            tempHistory.add(p);
+
+            if (tile.getCoordinates().equals(p))
+            {
+                return tempHistory;
+            }
+        }
+
+        return movementHistory;
+    }
 }

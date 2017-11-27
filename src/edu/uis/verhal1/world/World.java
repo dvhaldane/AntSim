@@ -1,6 +1,7 @@
 package edu.uis.verhal1.world;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -16,6 +17,7 @@ public class World
     private final WorldTile[][] worldTileMap = new WorldTile[27][27];
     private boolean dayChanged = false;
     private boolean queenIsDead = false;
+    public ArrayList<Point> blacklistedPoints = new ArrayList<>();
 
     public World()
     {
