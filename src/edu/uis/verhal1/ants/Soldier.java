@@ -34,11 +34,10 @@ public class Soldier extends Ant implements TickAction
         {
             if (tile.getBalaCount() > 0)
             {
-                int roll = random.nextInt(2);
 
-                System.out.println(tile.getCoordinates().getX() + "," + tile.getCoordinates().getY() + " rolled " + roll);
+                boolean killBala = random.nextBoolean();
 
-                if (roll == 1)
+                if (killBala)
                 {
                     Set set = tile.getAntMap().entrySet();
                     for (Object aSet : set)
@@ -58,18 +57,31 @@ public class Soldier extends Ant implements TickAction
                         }
                     }
                 }
-            } else // Find balas and move to adjacent squares or move randomly
+            }
+            else // Find balas and move to adjacent squares or move randomly
             {
 
                 ArrayList<Point> validMoveToTiles = getValidMovementPoints(world, pointList, tile.getCoordinates());
-
+                ArrayList<Point> revealedTiles = new ArrayList<>();
                 for (Point p : validMoveToTiles)
                 {
                     int x = (int) tile.getCoordinates().getX() - (int) p.getX();
 
                     int y = (int) tile.getCoordinates().getY() - (int) p.getY();
 
-                    if (world.getTileFromTilemap(x, y).getBalaCount() > 0)
+                    if (world.getTileFromTilemap(x,y).isRevealed())
+                    {
+                        revealedTiles.add(p);
+                    }
+                }
+
+                for (Point p : revealedTiles)
+                {
+                    int x = (int) tile.getCoordinates().getX() - (int) p.getX();
+
+                    int y = (int) tile.getCoordinates().getY() - (int) p.getY();
+
+                    if (world.getTileFromTilemap(x, y).getBalaCount() > 0 && world.getTileFromTilemap(x,y).isRevealed())
                     {
 
                         WorldTile targetTile = world.getTileFromTilemap(x, y);
@@ -82,9 +94,9 @@ public class Soldier extends Ant implements TickAction
                 if (!balaFound)
                 {
 
-                    int pick = random.nextInt(validMoveToTiles.size());
+                    int pick = random.nextInt(revealedTiles.size());
 
-                    Point point = validMoveToTiles.get(pick);
+                    Point point = revealedTiles.get(pick);
 
                     int x = (int) tile.getCoordinates().getX() - (int) point.getX();
 

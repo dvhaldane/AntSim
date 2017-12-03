@@ -4,11 +4,10 @@ import edu.uis.verhal1.gui.*;
 import edu.uis.verhal1.world.World;
 import edu.uis.verhal1.world.WorldTile;
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by HaldaneDavidV on 10/7/2017.
@@ -19,12 +18,15 @@ class GameManager implements ActionListener, SimulationEventListener
     private final int colonyWidth;
     private int colonyMidpointX;
     private int colonyMidpointY;
+    private final String stopBeforeReset = "You must stop the game before resetting it.";
+    private final String setupGame = "You must set the game up before running it.";
     private final String endMessage = "Game has ended due to reason: ";
     private final String endReason_QUEEN = "The Queen has died.";
     private AntSimGUI gui;
     private ColonyView view;
-    private final Timer gameTick = new Timer(2,this);
+    private final Timer gameTick = new Timer(1000,this);
     private final World world = new World();
+    private boolean isSetup = false;
 
     GameManager()
     {
@@ -37,15 +39,35 @@ class GameManager implements ActionListener, SimulationEventListener
     {
         if (simEvent.getEventType() == SimulationEvent.NORMAL_SETUP_EVENT)
         {
-            gameTick.stop();
-            performGameSetup();
+            if (!isSetup)
+            {
+                setStartingTiles();
+                isSetup = true;
+            }
+        }
+        else if (simEvent.getEventType() == SimulationEvent.RESET_EVENT)
+        {
+            if (isSetup && !gameTick.isRunning())
+            {
+                gui.dispose();
+                performGameSetup();
+                reset();
+            }
+            else if (gameTick.isRunning())
+            {
+                JOptionPane.showMessageDialog(view,stopBeforeReset);
+            }
+
         }
         else if (simEvent.getEventType() == SimulationEvent.RUN_EVENT)
         {
-            if (gameTick.isRunning())
+            if (!isSetup)
+            {
+                JOptionPane.showMessageDialog(view,setupGame);
+            }
+            else if (gameTick.isRunning())
             {
                 gameTick.stop();
-
             }
             else
             {
@@ -54,8 +76,15 @@ class GameManager implements ActionListener, SimulationEventListener
         }
         else if (simEvent.getEventType() == SimulationEvent.STEP_EVENT)
         {
-            gameTick.stop();
-            performGameTick();
+            if (!isSetup)
+            {
+                JOptionPane.showMessageDialog(view,setupGame);
+            }
+            else
+            {
+                gameTick.stop();
+                performGameTick();
+            }
         }
         else
         {
@@ -71,7 +100,7 @@ class GameManager implements ActionListener, SimulationEventListener
         view = new ColonyView(colonyHeight, colonyWidth);
 
         //Build Starting Tiles
-        setStartingTiles();
+
 
         gui.initGUI(view);
 
@@ -100,6 +129,7 @@ class GameManager implements ActionListener, SimulationEventListener
                         TileManager.createSpawnTile(tile);
                     }
 
+                    tile.reveal();
                     view.addColonyNodeView(node, x, y);
                     tile.setNode(node);
                     NodeManager.updateNodeDisplay(node, tile);
@@ -126,6 +156,38 @@ class GameManager implements ActionListener, SimulationEventListener
             endGame();
         }
 
+    }
+
+    private void reset()
+    {
+
+        for (int i = 0; i < world.getWorldTileMap().length; i++)
+        {
+            for (int j = 0; j < world.getWorldTileMap()[i].length; j++)
+            {
+                world.getWorldTileMap()[i][j] = null;
+            }
+        }
+
+        setStartingTiles();
+
+        //Postprocess Tiles
+        /*
+        for (int i = 0; i < world.getWorldTileMap().length; i++)
+        {
+            for (int j = 0; j < world.getWorldTileMap()[i].length; j++)
+            {
+                if (world.getWorldTileMap()[i][j] != null && world.getWorldTileMap()[i][j].isRevealed())
+                {
+                    WorldTile tile = world.getWorldTileMap()[i][j];
+                    NodeManager.updateNodeDisplay(tile.getNode(), tile);
+                }
+            }
+        }
+        */
+
+        world.setDay(0);
+        world.setTurn(0);
     }
 
     private void endGame()
@@ -233,7 +295,7 @@ class GameManager implements ActionListener, SimulationEventListener
 
                     tile.mergeAntQueue();
 
-                    if (tile.getNode().visible() || tile.getRevealed())
+                    if (tile.getNode().visible() || tile.isRevealed())
                     {
                         if (world.getDayChanged())
                         {

@@ -1,6 +1,7 @@
 package edu.uis.verhal1.ants;
 
 import edu.uis.verhal1.driver.TickAction;
+import edu.uis.verhal1.driver.TileManager;
 import edu.uis.verhal1.world.World;
 import edu.uis.verhal1.world.WorldTile;
 
@@ -29,7 +30,6 @@ public class Scout extends Ant implements TickAction
         else
         {
             //Movement Logic
-
             Random random = new Random();
             ArrayList<Point> validMoveToTiles = getValidMovementPoints(world, pointList, tile.getCoordinates());
 
@@ -44,18 +44,9 @@ public class Scout extends Ant implements TickAction
 
             move(tile, targetTile, this);
 
-            if (!targetTile.getRevealed())
+            if (!targetTile.isRevealed())
             {
-                int foodChance = random.nextInt(100);
-
-                if (foodChance >= 75)
-                {
-                    int food = random.nextInt(500) + 501;
-                    targetTile.setFood(targetTile.getFood() + food);
-                }
-
-                targetTile.reveal();
-
+                TileManager.discoverTile(targetTile);
             }
 
             if (world.getDayChanged())

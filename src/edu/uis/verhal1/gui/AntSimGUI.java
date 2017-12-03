@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SpringLayout;
+import edu.uis.verhal1.driver.*;
 
 /**
  *	class AntSimGUI
@@ -224,6 +225,9 @@ public class AntSimGUI extends JFrame
 		
 		// button for setting up a normal simulation
 		private JButton normalSetupButton;
+
+		// button for reset
+		private JButton resetButton;
 		
 		// button for setting up to test the queen ant
 		private JButton queenTestButton;
@@ -282,7 +286,12 @@ public class AntSimGUI extends JFrame
 			normalSetupButton = new JButton("Normal Setup");
 			normalSetupButton.addActionListener(buttonHandler);
 			normalSetupButton.setToolTipText("Set up simulation for normal execution");
-			
+
+			// Reset Button
+			resetButton = new JButton("Reset");
+			resetButton.addActionListener(buttonHandler);
+			resetButton.setToolTipText("Set up simulation for testing the queen ant");
+
 			// queen test button
 			//queenTestButton = new JButton("Queen Test");
 			//queenTestButton.addActionListener(buttonHandler);
@@ -302,9 +311,14 @@ public class AntSimGUI extends JFrame
 			//soldierTestButton = new JButton("Soldier Test");
 			//soldierTestButton.addActionListener(buttonHandler);
 			//soldierTestButton.setToolTipText("Set up simulation for testing the soldier ant");
-			
+
 			// button for running simulation continuously
-			runButton = new JButton("Run");
+			resetButton = new JButton("Reset");
+			resetButton.addActionListener(buttonHandler);
+			resetButton.setToolTipText("Reset the simulation");
+
+			// button for running simulation continuously
+			runButton = new JButton("Run / Pause");
 			runButton.addActionListener(buttonHandler);
 			runButton.setToolTipText("Run the simulation continuously");
 			
@@ -324,6 +338,7 @@ public class AntSimGUI extends JFrame
 		 */
 		private void layoutComponents()
 		{
+			//this.add(resetButton);
 			this.add(normalSetupButton);
 			//this.add(queenTestButton);
 			//this.add(scoutTestButton);
@@ -374,6 +389,11 @@ public class AntSimGUI extends JFrame
 					// set up for normal simulation
 					fireSimulationEvent(SimulationEvent.NORMAL_SETUP_EVENT);
 				}
+				else if (b.getText().equals("Reset"))
+				{
+					// set up for normal simulation
+					fireSimulationEvent(SimulationEvent.RESET_EVENT);
+				}
 				else if (b.getText().equals("Queen Test"))
 				{
 					// set for testing the queen ant
@@ -394,26 +414,15 @@ public class AntSimGUI extends JFrame
 					// set for testing the soldier ant
 					fireSimulationEvent(SimulationEvent.SOLDIER_TEST_EVENT);
 				}
-				else if (b.getText().equals("Run") || b.getText().equals("Stop"))
+				else if (b.getText().equals("Run / Pause"))
 				{
 					// run the simulation continuously
 					fireSimulationEvent(SimulationEvent.RUN_EVENT);
-
-					if (b.getText().equals("Run"))
-					{
-						b.setText("Stop");
-					}
-					else
-					{
-						b.setText("Run");
-					}
-
 				}
 				else if (b.getText().equals("Step"))
 				{
 					// run the simulation one turn at a time
 					fireSimulationEvent(SimulationEvent.STEP_EVENT);
-					runButton.setText("Run");
 				}
 			}
 		}

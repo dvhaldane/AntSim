@@ -36,7 +36,9 @@ public class SimulationEvent extends EventObject
 	
 	// run simulation one turn at a time
 	public final static int STEP_EVENT = 6;
-	
+
+	// Reset
+	public final static int RESET_EVENT = 7;
 	
 	/*************
 	 *	attributes

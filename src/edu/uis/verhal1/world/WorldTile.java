@@ -118,7 +118,7 @@ public class WorldTile
         this.foragerCount = count;
     }
 
-    public boolean getRevealed()
+    public boolean isRevealed()
     {
         return this.revealed;
     }
